@@ -25,6 +25,7 @@ public:
     int knife_picker = 0;
     volatile bool submit_recheck_flag = false;
     bool knife_capture_submit = false;
+    volatile bool checking_staff_flag = false;
 
     std::queue<request_def> request_list;
 

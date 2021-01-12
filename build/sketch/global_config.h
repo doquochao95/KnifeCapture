@@ -53,8 +53,14 @@
 #define BUT_OK 0xC0
 #define BUT_NO 0xC1
 
+#define LED_ON 0xE8
+#define LED_OFF 0xE9
+
 #define ETHERNET_CS_PIN GPIO_NUM_5
 #define ETHERNET_RST_PIN GPIO_NUM_26
+
+#define MFRC522_SS_PIN GPIO_NUM_21
+#define MFRC522_RST_PIN GPIO_NUM_22
 
 #define EX_QUEUE_FULL 0
 #define EX_SUCCESS 1
@@ -62,6 +68,7 @@
 
 #define MAX_MACHINE_NUM 10
 #define MAX_MACHINE_PER_PAGE 3
+#define ALARM_PIN GPIO_NUM_13
 
 
 typedef struct

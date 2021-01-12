@@ -40,6 +40,36 @@
     "Includepath": null
   },
   {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build\\sketch\\check_staff.cpp",
+    "Include": "MFRC522.h",
+    "Includepath": "C:\\Users\\Administrator\\Documents\\Arduino\\libraries\\MFRC522\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build\\sketch\\check_staff.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build\\sketch\\ethernet_sync_func.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build\\sketch\\nextion_extensions.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build\\sketch\\rfid_mfrc522.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build\\sketch\\sys_config.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
     "Sourcefile": "C:\\Program Files (x86)\\Arduino\\libraries\\Ethernet\\src\\Dhcp.cpp",
     "Include": "",
     "Includepath": null
@@ -141,6 +171,16 @@
   },
   {
     "Sourcefile": "C:\\Users\\Administrator\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\1.0.4\\libraries\\SPI\\src\\SPI.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\Arduino\\libraries\\MFRC522\\src\\MFRC522.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Administrator\\Documents\\Arduino\\libraries\\MFRC522\\src\\MFRC522Extended.cpp",
     "Include": "",
     "Includepath": null
   }

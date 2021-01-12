@@ -4,6 +4,7 @@
 #include "global_config.h"
 #include "global_scope.h"
 #include "sys_config.h"
+#include "check_staff.h"
 
 inline void user_handler_task_callback_func();
 inline void ethernet_handler_task_callback_fnc();
@@ -89,24 +90,6 @@ void loop()
 }
 
 /******************************************************************************************/
-void ethernet_handler_task(void *pr)
-{
-    if (xSemaphoreTake(xSemaphore, (TickType_t)0))
-    {
-        printf("ethernet_handler_task has taken the semaphored, semaphore value: %d\r\n", uxSemaphoreGetCount(xSemaphore));
-
-        ethernet_handler_task_callback_fnc();
-
-        vTaskDelete(RequestTaskHandle);
-        if (xSemaphoreGive(xSemaphore) == pdTRUE)
-        {
-            printf("ethernet_handler_task has given the semaphored\r\n");
-            printf("Task end\r\n");
-        }
-    }
-}
-
-/******************************************************************************************/
 void user_handler_task(void *pr)
 {
     int ticks = 0;
@@ -183,6 +166,11 @@ inline void user_handler_task_callback_func()
     // ethernet_waiting for data coming in
     knife_capture.ethernet_handle.running();
 
+    if(knife_capture.checking_staff_flag)
+    {
+        rfid_checking();
+    }
+
     if (DevicePostNow)
     {
         printf("Post local data now\r\n");
@@ -194,41 +182,6 @@ inline void user_handler_task_callback_func()
     {
         EthernetMaintainNow = false;
         knife_capture.ethernet_handle.ethernet_maintain();
-    }
-}
-
-inline void ethernet_handler_task_callback_fnc()
-{
-    function_log();
-    // if create timer success, then make new request
-
-    if (RequestTimeOut_TimerHandle == NULL)
-    {
-        if (!sys_create_request_timeout_timer())
-        {
-            if (!knife_capture.ethernet_request_next())
-            {
-                printf("Connect to server failed\r\n");
-
-                //BaseType_t excp = xTimerStop(RequestTimeOut_TimerHandle, (TickType_t)0);
-                //printf("Stop request waiting timer, Excp code: %d\r\n", excp);
-                knife_capture.sys_requesting = false;
-            }
-        }
-    }
-
-    if (RequestTimeOut_TimerHandle != NULL)
-    {
-        BaseType_t excp = xTimerReset(RequestTimeOut_TimerHandle, (TickType_t)0);
-        printf("Reset request waiting timer, Excp code: %d\r\n", excp);
-        if (!knife_capture.ethernet_request_next())
-        {
-            printf("Connect to server failed\r\n");
-
-            //BaseType_t excp = xTimerStop(RequestTimeOut_TimerHandle, (TickType_t)0);
-            knife_capture.sys_requesting = false;
-            //printf("Stop request waiting timer, Excp code: %d\r\n", excp);
-        }
     }
 }
 

@@ -27,5 +27,6 @@
         "ios": "cpp",
         "xstring": "cpp"
     },
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "arduino.path": "C:\\Program Files (x86)\\Arduino"
 }
