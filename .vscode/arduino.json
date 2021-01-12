@@ -1,0 +1,8 @@
+{
+    "board": "esp32:esp32:esp32doit-devkit-v1",
+    "configuration": "FlashFreq=80,UploadSpeed=921600,DebugLevel=debug",
+    "sketch": "KnifeCapture.ino",
+    "port": "COM3",
+    "output": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build",
+    "programmer": "Arduino as ISP"
+}
