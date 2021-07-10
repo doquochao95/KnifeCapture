@@ -757,6 +757,7 @@ struct machine_handler
         nx_clear_machine_screen();
 
         nex_set_page_number(page_number);
+        delay(100);
 
         for (size_t i = 0; i < MAX_MACHINE_PER_PAGE; i++)
         {
@@ -764,6 +765,7 @@ struct machine_handler
             if (machine != NULL)
             {
                 nx_display_machine(i, machine);
+                delay(50);
             }
         }
     }

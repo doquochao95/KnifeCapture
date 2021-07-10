@@ -68,8 +68,11 @@
 
 #define MAX_MACHINE_NUM 10
 #define MAX_MACHINE_PER_PAGE 3
-#define ALARM_PIN GPIO_NUM_13
+#define ALARM_PIN GPIO_NUM_13 //Buzzer pin = 13
 
+//Nextion serial2 pin ( RX=16;TX=17)
+//Motor serial1 pin (RX==33;TX=25)
+//C:\Users\Administrator\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.4\cores\esp32\HardwareSerial.cpp
 
 typedef struct
 {

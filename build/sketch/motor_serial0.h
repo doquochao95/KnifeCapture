@@ -10,10 +10,7 @@ static void motorserial_init ()
 }
 static void motorserial_sendcommand (char *commands)
 {
-   Motorserial.write(commands);
-	//Motor.write(0xFF);
-	//Motor.write(0xFF);d
-	//Motor.write(0xFF);
+	Motorserial.write(commands);
 	printf("motor cmd: %s\r\n", commands);
 }
 

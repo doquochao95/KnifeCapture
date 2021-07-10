@@ -5,6 +5,7 @@
 #include "global_scope.h"
 #include "knife_capture_handler.h"
 #include "rfid_mfrc522.h"
+#include "nextion_extensions.h"
     //  "output": "C:\\Users\\Administrator\\Documents\\GitHub\\KnifeCapture\\KnifeCapture\\build",
 
 extern SemaphoreHandle_t xSemaphore;

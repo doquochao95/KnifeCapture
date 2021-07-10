@@ -4,7 +4,11 @@
 #include "global_config.h"
 #include "global_scope.h"
 
-struct knife_head_def
+struct knife_head_def // struct : tập hợp các biến khác kiểu và hàm thao tác với các biến trong struc
+//Để tạo ra một kiểu dữ liệu mới với các phần tử dữ liệu có kiểu khác nhau nhưng có liên kết với nhau
+// Để mô tả cùng 1 đối tượng bằng các phần tử dữ liệu có mô tả kiểu khác nhau phải dùng kiểu Struct
+// Mặc định của struct là public
+//def: difination(định nghĩa)
 {
     int old_rp_knife = 0; // old replace knife
     int new_rp_knife = 0; // new replace knife
@@ -158,7 +162,7 @@ struct request_def
         function_log();
         printf("Counter value %d\r\n", local_value);
         valid = true;
-        memccpy(machine_name, name, 0, sizeof(machine_name));
+        memccpy(machine_name, name, 0, sizeof(machine_name)); // copy name vào machine từ bit 0
         knife_position = pos;
         knife_type = type;
         knife_picked = knife_picker;
@@ -199,6 +203,7 @@ private:
     int last_update_addr;
     int left_knife_addr;
     int right_knife_addr;
+    int knife251_quantity_addr;
     int max_storage_size = 96;
     int storage_addr = 0;
 

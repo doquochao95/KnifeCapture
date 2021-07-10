@@ -7,7 +7,7 @@
 #include "ethernet_handler.h"
 #include "autocut_machine_props.h"
 
-class knife_capture_class
+class knife_capture_class 
 {
 public:
     machine_handler machine_handle = machine_handler(MACHINE_START_ADDR);
@@ -27,7 +27,7 @@ public:
     bool knife_capture_submit = false;
     volatile bool checking_staff_flag = false;
 
-    std::queue<request_def> request_list;
+    std::queue<request_def> request_list; //:: toán tử chỉ định phạm vi
 
     // Initializes all background data
     void init()
@@ -45,7 +45,7 @@ public:
     {
         nex_backto_screen1();
         printf("request_list.size() %d, sys_requesting %d, knife_capture_submit %d\r\n", request_list.size(), sys_requesting, knife_capture_submit);
-        return (request_list.size() > 0 && !sys_requesting);
+        return (request_list.size() > 0 && !sys_requesting); // size() lấy số lượng phần tử
     }
 
     // result: @1 = successed
@@ -73,7 +73,7 @@ public:
         }
 
         nex_send_message("Updated Successfully");
-        request_list.push(new_request);
+        request_list.push(new_request);//đẩy dữ liệu 
         // success
         return 1;
     }
@@ -109,7 +109,7 @@ public:
         if (request_list.front().retry_time < 0)
         {
             printf("Request failed after retry\r\n");
-            request_list.pop();
+            request_list.pop(); //xóa request_list
         }
 
         if (ethernet_handle.start_connect_to_server(3000))
@@ -128,7 +128,7 @@ public:
         return false;
     }
 
-    void local_device_post_data()
+    void local_device_post_data() //Post local data to server
     {
         function_log();
         if (!ethernet_handle.cable_connected)
@@ -166,7 +166,7 @@ public:
         if (request_list.size() <= 0)
             return false;
 
-        request_list.front().retry_time--;
+        request_list.front().retry_time--; // front() lất giá trị của phần tử đầu
         if (request_list.front().retry_time < 0)
         {
             printf("Request failed after retry\r\n");

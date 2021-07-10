@@ -2,6 +2,7 @@
 
 void rfid_checking()
 {
+    function_log();
     // checking rfid
     if (mfrc522_read_new_tag())
     {
@@ -11,7 +12,7 @@ void rfid_checking()
         memset(header.buf, 0, sizeof(header.buf));
         // request package
         //{PostId, KC_DeviceId, EOP, TagNumber}
-        json_doc["PostId"] = millis();
+        json_doc["PostId"] = millis(); //millis() thời gian hoạt động kể từ lúc khởi động (ms)
         json_doc["KC_DeviceId"] = knife_capture.local_device_id;
         json_doc["EOP"] = "checking_staff";
         json_doc["TagNumber"] = (const char *)TagNumber;
@@ -26,6 +27,7 @@ void rfid_checking()
 // checking staff callback function
 void checking_staff_callback(JsonDocument &json_doc)
 {
+    function_log();
     printf ("checking_staff_callback\n");
     bool rfid_pass = json_doc.getMember("Pass").as<bool>();
     JsonParse_Element(json_doc, "Pass", rfid_pass);
@@ -53,8 +55,8 @@ void checking_staff_callback(JsonDocument &json_doc)
             xTimerReset(ConfirmTimeOut_TimerHandle, (TickType_t)0);
         }
 
-        nex_goto_page("KNIFE_PICKER");
         Output_Alarm();
+        nex_goto_page("KNIFE_PICKER");
         nex_send_message((char *)username.c_str()); // pick from server useless
         //
     }

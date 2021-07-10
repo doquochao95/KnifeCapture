@@ -81,7 +81,7 @@ void setStringProperty(const char *pageName, char *propertyName, char *value)
 	sendCommand(command);
 }
 
-size_t getStringProperty(const char *pageName, char *propertyName, char *value, size_t len)
+size_t getStringProperty(const char *pageName, char *propertyName, char *value, size_t len) //len=length
 {
 	size_t commandLen = 6 + strlen(pageName) + strlen(propertyName);
 	char command[commandLen];

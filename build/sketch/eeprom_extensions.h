@@ -2,7 +2,7 @@
 #define eeprom_extension_h
 #include <EEPROM.h>
 
-template <typename T>
+template <typename T> //template: một kiểu dữ liệu trừu tượng tổng quát hóa cho các kiểu dữ liệu int, float, double, bool...
 void eeprom_write(T val, int addr)
 {
 	uint8_t size = sizeof(T);

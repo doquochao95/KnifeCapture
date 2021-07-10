@@ -77,6 +77,7 @@ void PAGE_LOADING_EVENT_CALLBACK(uint8_t pageId, uint8_t componentId, uint8_t ev
         if (componentId == NEX_BUT_SETTING)
         {
             nex_goto_page("SETTING");
+            motorserial_sendcommand("setled");
             knife_capture.nx_update_new_setting_screen();
         }
 
@@ -148,14 +149,15 @@ void PAGE_LOADING_EVENT_CALLBACK(uint8_t pageId, uint8_t componentId, uint8_t ev
         }
         if (componentId == LED_ON)
         {
-            motorserial_sendcommand("ledon");
+            motorserial_sendcommand("onled");
             printf("Led: On");
         }
         if (componentId == LED_OFF)
         {
-            motorserial_sendcommand("ledoff");
+            motorserial_sendcommand("noled");
             printf("Led: Off");
         }
+        
         break;
 
     case 2: // page setting2
@@ -172,38 +174,55 @@ void PAGE_LOADING_EVENT_CALLBACK(uint8_t pageId, uint8_t componentId, uint8_t ev
 
         break;
 
-    case 7: // recheck page// check for the confirmation after click but//knife picker page
+    case 7: // knife picker page// check for the confirmation after click but//knife picker page
         if (knife_capture.submit_recheck_flag)
         {
-            if (componentId == BUT_NO)
+            if (componentId == BUT_NO) //Exit button
             {
-                knife_capture.submit_recheck_flag = false;
-                nex_goto_page("SCREEN1");
-                BaseType_t excp = xTimerStop(ConfirmTimeOut_TimerHandle, (TickType_t)0);
+                nex_goto_page("SCREEN1"); 
+                printf("Back to SCREEN1");
+                BaseType_t excp = xTimerStop(ConfirmTimeOut_TimerHandle, (TickType_t)0); //Stop confirm timer
                 printf("Stop confirm timeout Timer, Excp code: %d\r\n", excp);
+                knife_capture.submit_recheck_flag = false;
             }
 
             if (componentId < 0xEA && componentId >= 0xE0)
             {
-                bool right_pick = false;
-                componentId &= 0x0F;
+                int right_pick;
+                componentId &= 0x0F; // componentID = componentID & 0x0F (1111)
+                //#46251 => componentID = OxE0 (1110 0000) <=> 1110 0000 & 0000 1111 = 0000 0000 =0 
+                if (knife_capture.local_device_id < 10 && componentId == 0)  
+                    right_pick = 46251;
+                //#30782 => componentID = OxE1 (1110 0001) <=> 1110 0001 & 0000 1111 = 0000 0001 =1
+                if (knife_capture.local_device_id < 10 && componentId == 1)  
+                    right_pick = 30782;
+                // local_device_id = ID column in Kc_device table
+                // 
+                //if (knife_capture.local_device_id < 10 && componentId < 4)  
+                //    right_pick = 1;
 
-                if (knife_capture.local_device_id < 10 && componentId < 4)
-                    right_pick = true;
+                //if (knife_capture.local_device_id >= 10 && componentId >= 4)
+                //    right_pick = 2;
 
-                if (knife_capture.local_device_id >= 10 && componentId >= 4)
-                    right_pick = true;
-
-                if (right_pick)
+                if (right_pick == 46251)
                 {
                     if (motor)
                     {
-                        //digitalWrite(led,HIGH);
                         motorserial_sendcommand("rotate");
                         nex_goto_page("LOCK");
-                        delay(5000);
                         motor = false;
+                        delay(5000);
                     }
+                    knife_capture.knife_picker = componentId + 1; 
+                    knife_capture.add_new_request_to_queue();
+                    nex_goto_page("SCREEN1");
+                    knife_capture.submit_recheck_flag = false;
+                    BaseType_t excp = xTimerStop(ConfirmTimeOut_TimerHandle, (TickType_t)0);
+                    printf("Stop confirm timeout Timer, Excp code: %d\r\n", excp);
+                }
+                if (right_pick == 30782)
+                {
+                    motor = false;
                     knife_capture.submit_recheck_flag = false;
                     knife_capture.knife_picker = componentId + 1;
                     knife_capture.add_new_request_to_queue();
@@ -304,19 +323,15 @@ void nx_knife_capture_submit(uint8_t but_id)
         motor = false;
         break;
     }
-
     printf("New knife captured: slot=%d,pos=%d, type=%d\r\n",
            machine_slot, knife_position, knife_type);
-
     knife_capture.knife_position = knife_position;
     knife_capture.knife_type = knife_type;
     knife_capture.machine_slot = machine_slot;
-    nex_goto_page("CONFIRM_PAGE");  // confirm page nay laf page cho rfid phair ko
+
+    nex_goto_page("CONFIRM_PAGE"); 
     printf("Current page: CONFIRM PAGE\r\n");
-
-    // go to checking staff step
-    knife_capture.checking_staff_flag = true;
-
+    knife_capture.checking_staff_flag = true; // go to checking staff step
     printf("nx_knife_capture_submit.knife_capture.checking_staff_flag = true\r\n");
     // check the confirmaion
     if (ConfirmTimeOut_TimerHandle == NULL)
@@ -330,18 +345,11 @@ void nx_knife_capture_submit(uint8_t but_id)
     {
         xTimerReset(ConfirmTimeOut_TimerHandle, (TickType_t)0);
     }
-    
-    //nex_goto_page("KNIFE_PICKER");
-    //digitalWrite(led,HIGH);
-    //delay(2000);
-    //digitalWrite(led,LOW);
-    
-
 }
 
 bool sys_create_confirm_timeout_timer()
 {
-    //create 2s timer to check the timeout of button clicked
+    //create 15s timer to check the timeout of button clicked
     ConfirmTimeOut_TimerHandle = xTimerCreate("ConfirmTimeOut_TimerHandle", (15000), pdTRUE, NULL, confirm_timeout_timer);
 
     if (ConfirmTimeOut_TimerHandle == NULL)
@@ -412,7 +420,7 @@ void confirm_timeout_timer(TimerHandle_t pxTimer)
     knife_capture.submit_recheck_flag = false;
     printf("confirm_timeout_timer.submit_recheck_flag = false\r\n");
     xTimerStop(pxTimer, (TickType_t)0);
-    delay(100);
+    delay(50);
     nex_goto_page("SCREEN1");
     printf("Current page: Screen1\r\n");
 }

@@ -67,7 +67,7 @@ public:
     int setting_up_ethernet_module()
     {
         function_log();
-        nex_backto_screen1();
+        //Get_motorserial_command();
         Ethernet.init(chip_select_pin);
 
         printf("Begin Ethernet configuration using DHCP\r\n");

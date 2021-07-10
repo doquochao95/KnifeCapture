@@ -19,7 +19,6 @@ extern INextionTouchable PAGE_LOADING_EVENT;
 
 void nex_listening();
 void sendCommand(char *commandStr);
-void nex_backto_screen1();
 void nex_goto_page(char *page_name);
 void getPropertyName(const char *inputName, char *outputName, uint8_t type);
 void setNumberProperty(const char *pageName, char *propertyName, uint32_t value);

@@ -1,10 +1,11 @@
 
 #include "nextion_extensions.h"
 #include "NextionCheckbox.h"
+
 const char *NexPropertyType[5] = {"txt", "val", "bco", "pic", "pco"};
 Nextion nex(NextionSerial);
 INextionTouchable PAGE_LOADING_EVENT = INextionTouchable(nex);
-NextionCheckbox c0 = NextionCheckbox(nex, 0,35,"c0");
+NextionCheckbox c0 = NextionCheckbox(nex, 1,35,"c0");
 
 void nex_listening()
 {
@@ -19,25 +20,7 @@ void sendCommand(char *commandStr)
 	NextionSerial.write(0xFF);
 	printf("nextion cmd: %s\r\n", commandStr);
 }
-void nex_backto_screen1()
-{
-	if (Serial1.available())
-	{
-		String com = Serial1.readString();
-		com.trim();
-		Serial.println(com);
-		switch (com.charAt(0))
-		{
-		case 'S':
-			size_t commandLen = 6 + strlen("SCREEN1");
-			char command[commandLen];
-			snprintf(command, commandLen, "page %s", "SCREEN1");
-			sendCommand(command);
-			printf("SCREEN1");
-			break;
-		}
-	}
-}
+
 void nex_goto_page(char *page_name)
 {
 	size_t commandLen = 6 + strlen(page_name);

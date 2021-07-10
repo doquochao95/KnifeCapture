@@ -7,7 +7,10 @@
 #include "ethernet_handler.h"
 #include "autocut_machine_props.h"
 
-class knife_capture_class
+class knife_capture_class // Class: taaph hợp các hàm thành viên và biến của hàm thành viên
+//private : chỉ dược phép thao tác cho các hàm thành viên
+//, các đối tượng bên ngoài không thể truy cập vào trực tiếp (thuongf là biến)
+//public: có thể được truy cập bởi người dùng (từ bên ngoài) (thường là hàm)
 {
 public:
     machine_handler machine_handle = machine_handler(MACHINE_START_ADDR);
@@ -26,6 +29,7 @@ public:
     volatile bool submit_recheck_flag = false;
     bool knife_capture_submit = false;
     volatile bool checking_staff_flag = false;
+    volatile bool status = false;
 
     std::queue<request_def> request_list;
 
@@ -43,8 +47,9 @@ public:
 
     bool ethernet_queue_available()
     {
-        nex_backto_screen1();
-        printf("request_list.size() %d, sys_requesting %d, knife_capture_submit %d\r\n", request_list.size(), sys_requesting, knife_capture_submit);
+        Get_motorserial_command();
+        if (request_list.size() > 0)
+            printf("request_list.size() %d, sys_requesting %d, knife_capture_submit %d\r\n", request_list.size(), sys_requesting, knife_capture_submit);
         return (request_list.size() > 0 && !sys_requesting);
     }
 
@@ -78,12 +83,12 @@ public:
         return 1;
     }
 
-    void checking_reset_counter_request()
+    void checking_reset_counter_request() //Checking for device resetting request from server
     {
         function_log();
         char url[256]{0};
 
-        sprintf(url,"kc_api/initial/%d/", millis());
+        sprintf(url, "kc_api/initial/%d/", millis());
 
         String cmd = String(url);
 
@@ -135,7 +140,7 @@ public:
             return;
 
         printf("Post all local data to server\r\n");
-        
+
         serialize_local_data();
 
         request_def new_request;
@@ -302,52 +307,52 @@ public:
         int total_machine_number = machine_handle.total_machine;
         if (total_machine_number > 3)
         {
-          NextionSerial.print("vis b13,1");
-          NextionSerial.write(0xFF); 
-          NextionSerial.write(0xFF);
-          NextionSerial.write(0xFF);
-          NextionSerial.print("vis b12,1");
-          NextionSerial.write(0xFF);
-          NextionSerial.write(0xFF);
-          NextionSerial.write(0xFF);
-          if ( current_machine_page == 1)
-          {
-             setStringProperty("SCREEN1","t10.txt","Next page");
-             setStringProperty("SCREEN1","t9.txt"," ");
-             NextionSerial.print("vis b12,0");
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-             NextionSerial.print("vis b13,1");
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-          }
-          else
-          {
-             setStringProperty("SCREEN1","t9.txt","Previous page");
-             setStringProperty("SCREEN1","t10.txt"," ");
-             NextionSerial.print("vis b12,1");
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-             NextionSerial.print("vis b13,0");
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-             NextionSerial.write(0xFF);
-          }
-       }
-       else
-       {
-          NextionSerial.print("vis b13,0");
-          NextionSerial.write(0xFF);
-          NextionSerial.write(0xFF);
-          NextionSerial.write(0xFF);
-          NextionSerial.print("vis b12,0");
-          NextionSerial.write(0xFF);
-          NextionSerial.write(0xFF);
-          NextionSerial.write(0xFF);
-       }
+            NextionSerial.print("vis b13,1");
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+            NextionSerial.print("vis b12,1");
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+            if (current_machine_page == 1)
+            {
+                setStringProperty("SCREEN1", "t10.txt", "Next page");
+                setStringProperty("SCREEN1", "t9.txt", " ");
+                NextionSerial.print("vis b12,0");
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+                NextionSerial.print("vis b13,1");
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+            }
+            else
+            {
+                setStringProperty("SCREEN1", "t9.txt", "Previous page");
+                setStringProperty("SCREEN1", "t10.txt", " ");
+                NextionSerial.print("vis b12,1");
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+                NextionSerial.print("vis b13,0");
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+                NextionSerial.write(0xFF);
+            }
+        }
+        else
+        {
+            NextionSerial.print("vis b13,0");
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+            NextionSerial.print("vis b12,0");
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+            NextionSerial.write(0xFF);
+        }
     }
 
     void nx_update_new_setting_screen()
@@ -359,6 +364,25 @@ public:
         nx_update_local_id_num();
 
         nx_update_machine_list();
+
+        Get_motorserial_command(); //check for serial command
+
+        delay(200);
+        while (1)
+        {
+            if ( status == true)
+            {
+                setNumberProperty("c0.val", 1);
+                printf("Set checkbox value: 1");
+                break;
+            }
+            else
+            {
+                setNumberProperty("c0.val", 0);
+                printf("Set checkbox value: 0");
+                break;
+            }
+        }
     }
 
     void nx_update_setting2_screen()
@@ -535,6 +559,38 @@ public:
         serializeJson(json_doc, http_header.buf);
         printf("Serialize local device data: success\r\n");
         //printf("Serialize Json: %s\r\n",  http_header.buf);
+    }
+    void Get_motorserial_command()
+    {
+        if (Serial1.available())
+        {
+            String com = Serial1.readString();
+            com.trim();
+            Serial.println(com);
+            switch (com.charAt(0))
+            {
+                case 'S':
+                    nex_goto_page("SETTING");
+                    nx_update_new_setting_screen();
+                    printf("Back to Setting");
+                    break;
+                case 'O':
+                    status = true;
+                    printf("Led Status: True");
+                    break;
+                case 'L':
+                    if ( status == true)
+                    {
+                        status = false;
+                        printf("Led Status: False");
+                        break;
+                    }
+                    else
+                    {
+                        break;/* code */
+                    }		
+            }
+        }
     }
 };
 #endif

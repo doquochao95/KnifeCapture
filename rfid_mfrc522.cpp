@@ -1,9 +1,11 @@
 #include "rfid_mfrc522.h"
+#include "global_config.h"
 MFRC522 mfrc(MFRC522_SS_PIN, MFRC522_RST_PIN);
 uint8_t TagNumber[16];
 
 void mfrc522_init()
 {
+    function_log();
     printf("Initialize MFRC522\r\n");
     SPI.begin();
     mfrc.PCD_Init();
@@ -14,6 +16,7 @@ void mfrc522_init()
 
 String read_tagNumber()
 {
+    function_log();
     String uid = "";
 
     for (int8_t i = 0; i < 4; i++)
@@ -28,6 +31,7 @@ String read_tagNumber()
 
 bool mfrc522_read_new_tag()
 {
+    function_log();
     if (mfrc.PICC_IsNewCardPresent())
     {
         if (mfrc.PICC_ReadCardSerial())
@@ -45,6 +49,7 @@ bool mfrc522_read_new_tag()
 
 void Output_Alarm(uint8_t count)
 {
+    function_log();
     for (size_t i = 0; i < count; i++)
     {
         digitalWrite(ALARM_PIN, LOW);

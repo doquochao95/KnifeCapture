@@ -8,5 +8,4 @@ void rfid_checking();
 // { request_id, message, pass, eop}
 // checking staff callback function
 void checking_staff_callback(JsonDocument &json_doc);
-void rfid_checking();
 #endif

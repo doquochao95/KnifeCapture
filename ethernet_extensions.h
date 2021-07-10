@@ -229,7 +229,7 @@ public:
     {
         function_log(ethernet_extension.h);
         Port = port;
-        memccpy(ServerIp, server_name, 0, sizeof(ServerIp));
+        memccpy(ServerIp, server_name, 0, sizeof(ServerIp)); //char
         snprintf(Host, sizeof(Host), "Host: %s:%d", ServerIp, Port);
         printf("New server profile: %s : %d\r\n", ServerIp, Port);
     }
